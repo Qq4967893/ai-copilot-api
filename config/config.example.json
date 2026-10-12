@@ -1,0 +1,55 @@
+{
+  "server": {
+    "host": "127.0.0.1",
+    "port": 8082
+  },
+  "database": {
+    "dsn": "mysql+aiomysql://root:@127.0.0.1:3306/ai_copilot?charset=utf8mb4",
+    "echo": false,
+    "pool_size": 5,
+    "pool_recycle": 1800
+  },
+  "mcp": {
+    "base_url": "http://127.0.0.1:8081/mcp",
+    "service_token": "replace-with-internal-mcp-server-service-token",
+    "timeout_seconds": 30
+  },
+  "auth": {
+    "dev_user": {
+      "user_id": "10001",
+      "display_name": "dev",
+      "scopes": [
+        "admin.api.ping.read",
+        "admin.api.deposits.read",
+        "admin.api.commissions.read"
+      ]
+    }
+  },
+  "llm": {
+    "base_url": "https://replace-with-your-openai-compatible-gateway/v1",
+    "api_key": "",
+    "timeout_seconds": 60
+  },
+  "model": {
+    "active_profile": "default",
+    "profiles": {
+      "default": {
+        "model": "gpt-5",
+        "max_turns": 8,
+        "agent_timeout_seconds": 90,
+        "tool_timeout_seconds": 20,
+        "max_tool_result_chars": 20000
+      }
+    }
+  },
+  "agent": {
+    "impl": "echo"
+  },
+  "cors": {
+    "allow_origins": [
+      "http://127.0.0.1:5173",
+      "http://localhost:5173"
+    ]
+  },
+  "log_level": "info"
+}

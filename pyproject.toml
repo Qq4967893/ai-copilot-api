@@ -1,0 +1,62 @@
+[project]
+name = "ai-copilot-api"
+version = "0.1.0"
+description = "AI Copilot application backend and agent runtime"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.15",
+    # 2.0.50 修复了 aiomysql/asyncmy dialect 在 pymysql 1.2.0 下探测 ping() 签名的 bug
+    # (SQLAlchemy #13306)，低于这个版本连接池 pre-ping 会失败。
+    "sqlalchemy[asyncio]>=2.0.50",
+    "alembic>=1.13",
+    "aiomysql>=0.2",
+    # MySQL 8 默认 caching_sha2_password 认证需要 cryptography，
+    # 但 aiomysql 没有把它声明为依赖，必须显式引入。
+    "cryptography>=42",
+    "structlog>=24.1",
+    "python-ulid>=2.2",
+    "openai-agents>=0.22.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.27",
+    "aiosqlite>=0.20",
+    "ruff>=0.6",
+    "pyright>=1.1.380",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.pyright]
+include = ["app", "tests"]
+# 刻意不用 strict：strict 会和 SQLAlchemy 的 Mapped[] 推导以及 FastAPI 的
+# Depends() 默认值大量冲突，在骨架阶段只会制造噪音。
+typeCheckingMode = "standard"
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# pytest-asyncio 1.x 移除了 event_loop fixture，这两项必须显式声明。
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["error::DeprecationWarning"]
